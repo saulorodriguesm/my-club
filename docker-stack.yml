@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  backend:
+    image: myclub-backend:latest  # Nome da imagem do back-end
+    ports:
+      - "3001:3001"
+    environment:
+      DB_HOST: db                  # Nome do serviço para o banco de dados
+      DB_USER: root                # Usuário do banco
+      DB_PASSWORD: saulodev        # Senha do banco
+      DB_NAME: myclub_db           # Nome do banco de dados
+    networks:
+      - myclub-network
+    depends_on:
+      - db
+
+  frontend:
+    image: myclub-frontend:latest  # Nome da imagem do front-end
+    ports:
+      - "80:80"
+    networks:
+      - myclub-network
+
+  db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: saulodev  # Senha do usuário root
+      MYSQL_DATABASE: myclub_db      # Nome do banco de dados
+    ports:
+      - "3306:3306"
+    networks:
+      - myclub-network
+    volumes:
+      - db-data:/var/lib/mysql
+
+networks:
+  myclub-network:
+    driver: overlay  # Rede do tipo overlay para o Swarm
+
+volumes:
+  db-data:
